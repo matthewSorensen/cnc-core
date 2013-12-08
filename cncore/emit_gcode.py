@@ -4,7 +4,7 @@ class GcodeEmitter:
                        integer_format = "{}", 
                        floating_format = "{0:.4f}", 
                        line_ending = '\n',
-                       space = True
+                       space = True,
                        program_number = None)
         default.update(config)
         self.configuration = default
@@ -31,7 +31,7 @@ class GcodeEmitter:
             s.write('N')
             s.write(str(self.count))
 
-            if self.configuration.space:
+            if self.configuration['space']:
                 s.write(' ')
 
         for register in args:
@@ -40,7 +40,7 @@ class GcodeEmitter:
             if isinstance(register, str):
                 s.write(register)
 
-                if self.configuration.space:
+                if self.configuration['space']:
                     s.write(' ')
                 continue
 
@@ -49,7 +49,7 @@ class GcodeEmitter:
             s.write(str(axis))
             s.write(formatter.format(value))
 
-            if self.configuration.space:
+            if self.configuration['space']:
                 s.write(' ')
 
         s.write(self.configuration['line_ending'])
