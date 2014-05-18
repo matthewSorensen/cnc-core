@@ -61,3 +61,18 @@ def parse(lines):
                 # Otherwise, just a total parse error - indicate context
                 # as best as possible
                 raise ParseError(line_number,original,line)
+
+
+def lines_gen(f):
+    while True:
+        line = f.readline()
+        if line != '':
+            yield line
+        else:
+            break
+
+def parse_file(f):
+    # open the file, if it isn't a file handle
+    if isinstance(f, basestring):
+        f = open(f,'rb')
+    return parse(lines_gen(f))
