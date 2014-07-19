@@ -5,7 +5,6 @@ class ParseError(Exception):
         self.number = number
         self.line = line
         self.error = error
-        print self.friendly_message()
     def position(self):
         return number, error
 
