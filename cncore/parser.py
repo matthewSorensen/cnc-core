@@ -5,7 +5,7 @@ class ParseError(Exception):
         self.number = number
         self.line = line
         self.error = error
-        
+        print self.friendly_message()
     def position(self):
         return number, error
 
@@ -16,7 +16,12 @@ code = re.compile('\s*([A-Z])((-|\+)?[0-9]+\.?[0-9]*)')
 comment = re.compile('\(.*\)')
 end_comment = re.compile('([^)]*\))')
 
-def parse(lines):
+# For compatibility with reprap-flavor gcode, certain M-codes
+# that take arbitrary strings as arguments need a special case,
+# which is handled by completely throwing out the M-code and argument
+defective = [23, 28, 29, 30, 32, 98, 117, 540, 550, 551, 552, 553, 554]
+
+def parse(lines, reprap = False):
     # Context - line number, and overall line
     line_number = 0
     orignal = None
@@ -40,7 +45,15 @@ def parse(lines):
             match = code.match(line)
             if match:
                 line = line[len(match.group(0)):]
-                yield match.group(1), match.group(2)
+                if not reprap:
+                    yield match.group(1), match.group(2)
+                else:
+                    axis = match.group(1)
+                    value = match.group(2)
+                    if axis== 'M' and int(value) in defective:
+                        break
+                    else:
+                        yield axis, value
             else:
                 line = line.lstrip()
                 # In the case of whitespace, we've rememoved everything
@@ -71,8 +84,8 @@ def lines_gen(f):
         else:
             break
 
-def parse_file(f):
+def parse_file(f, reprap = False):
     # open the file, if it isn't a file handle
     if isinstance(f, basestring):
         f = open(f,'rb')
-    return parse(lines_gen(f))
+    return parse(lines_gen(f), reprap = reprap)
