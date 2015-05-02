@@ -8,4 +8,5 @@ setup(name='cncore',
       author_email='',
       license='BSD',
       packages=['cncore'],
+      install_requires=['svgwrite'],
       zip_safe=False)
