@@ -1,6 +1,7 @@
 # Binary STL serializer and deserializer
 import struct
 import io
+import numpy as np
 
 # Binary STL formats begin with an 80-character header, which is followed bin a 32-bit unsigned integer,
 # containing the number of triangles in the file.
